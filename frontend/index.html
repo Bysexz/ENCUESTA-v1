@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Métrica Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <!-- Welcome / Auth Section -->
+  <section id="welcome" class="centered">
+    <h1>Métrica Survey</h1>
+    <p>¡Crea y responde encuestas de forma rápida y segura!</p>
+    <div class="button-group">
+      <button id="btn-login" class="primary-btn">Iniciar Sesión</button>
+      <button id="btn-register" class="secondary-btn">Registrarse</button>
+    </div>
+  </section>
+
+  <!-- Dashboard (hidden until auth) -->
+  <section id="dashboard" class="hidden">
+    <header class="dashboard-header">
+      <h2>Mi Dashboard</h2>
+      <button id="btn-logout" class="secondary-btn">Cerrar sesión</button>
+    </header>
+    <button id="fab-create" class="fab">+</button>
+    <div id="my-surveys" class="survey-list"></div>
+  </section>
+
+  <!-- Public Feed (visible after login) -->
+  <section id="public-feed" class="hidden">
+    <header>
+      <h2>Encuestas Públicas</h2>
+      <input type="text" id="search" placeholder="Buscar…" />
+      <select id="category-filter">
+        <option value="">Todas las categorías</option>
+        <option value="Tecnología">Tecnología</option>
+        <option value="Entretenimiento">Entretenimiento</option>
+        <option value="Deportes">Deportes</option>
+      </select>
+    </header>
+    <div id="feed-list" class="survey-list"></div>
+  </section>
+
+  <!-- Survey Creation Modal -->
+  <dialog id="survey-modal">
+    <form id="survey-form" method="dialog">
+      <h3>Crear Encuesta</h3>
+      <label>
+        Pregunta:
+        <input type="text" id="question" required />
+      </label>
+      <label>
+        Categoría:
+        <select id="category" required>
+          <option value="Tecnología">Tecnología</option>
+          <option value="Entretenimiento">Entretenimiento</option>
+          <option value="Deportes">Deportes</option>
+        </select>
+      </label>
+      <div id="options-container">
+        <label>
+          Opción 1:
+          <input type="text" class="option-input" required />
+        </label>
+        <label>
+          Opción 2:
+          <input type="text" class="option-input" required />
+        </label>
+      </div>
+      <button type="button" id="add-option" class="secondary-btn">Añadir opción</button>
+      <div class="modal-actions">
+        <button type="submit" class="primary-btn">Crear</button>
+        <button type="button" id="cancel-modal" class="secondary-btn">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./script.js"></script>
+</body>
+</html>
