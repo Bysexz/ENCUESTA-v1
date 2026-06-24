@@ -9,1869 +9,692 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    /* ========== RESET & BASE ========== */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --bg-primary: #0a0a0a;
-      --bg-secondary: #111111;
-      --bg-card: #161616;
-      --bg-card-hover: #1a1a1a;
-      --text-primary: #ffffff;
-      --text-secondary: #a1a1aa;
-      --text-muted: #71717a;
-      --accent: #4f46e5;
-      --accent-light: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.4);
-      --accent-secondary: #06b6d4;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-light: rgba(255, 255, 255, 0.05);
-      --glass: rgba(255, 255, 255, 0.03);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --radius-xs: 6px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --brightness: 1;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-      filter: brightness(var(--brightness));
-      transition: filter 0.3s ease;
-    }
-
-    ::selection { background: rgba(99, 102, 241, 0.3); color: #c7d2fe; }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-primary); }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #555; }
-
-    .hidden { display: none !important; }
-
-    /* ========== ANIMATED BACKGROUND ========== */
-    .bg-animation {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      animation: orbFloat 20s ease-in-out infinite;
-    }
-
-    .bg-orb-1 {
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%);
-      top: -200px; left: -100px;
-      animation-delay: 0s;
-    }
-
-    .bg-orb-2 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.12), transparent 70%);
-      bottom: -150px; right: -100px;
-      animation-delay: -7s;
-      animation-duration: 25s;
-    }
-
-    .bg-orb-3 {
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.1), transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      animation-delay: -14s;
-      animation-duration: 30s;
-    }
-
-    @keyframes orbFloat {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(80px, -60px) scale(1.1); }
-      50% { transform: translate(-40px, 80px) scale(0.9); }
-      75% { transform: translate(60px, 40px) scale(1.05); }
-    }
-
-    .bg-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
-    }
-
-    /* ========== WELCOME SECTION ========== */
-    #welcome {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .welcome-logo {
-      width: 80px; height: 80px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 32px;
-      animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      box-shadow: 0 20px 60px -10px var(--accent-glow);
-    }
-
-    .welcome-logo iconify-icon { font-size: 36px; color: white; }
-
-    @keyframes logoReveal {
-      from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-      to { opacity: 1; transform: scale(1) rotate(0); }
-    }
-
-    .welcome-title {
-      font-family: 'Geist', sans-serif;
-      font-size: clamp(36px, 8vw, 64px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      margin-bottom: 16px;
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
-      opacity: 0;
-    }
-
-    .welcome-title span {
-      background: linear-gradient(135deg, #818cf8, #06b6d4, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .welcome-subtitle {
-      font-size: clamp(16px, 3vw, 20px);
-      font-weight: 300;
-      color: var(--text-secondary);
-      max-width: 500px;
-      line-height: 1.6;
-      margin-bottom: 48px;
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-      opacity: 0;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .welcome-buttons {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
-      opacity: 0;
-    }
-
-    .welcome-features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 64px;
-      max-width: 700px;
-      width: 100%;
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
-      opacity: 0;
-    }
-
-    .feature-card {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 16px;
-      text-align: center;
-      transition: var(--transition);
-    }
-
-    .feature-card:hover {
-      background: var(--bg-card);
-      border-color: rgba(255,255,255,0.12);
-      transform: translateY(-4px);
-    }
-
-    .feature-card iconify-icon {
-      font-size: 28px;
-      color: var(--accent-light);
-      margin-bottom: 8px;
-    }
-
-    .feature-card h4 {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .feature-card p {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* ========== BUTTONS ========== */
-    .primary-btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: white;
-      border: none;
-      padding: 14px 32px;
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .primary-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15));
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 40px -10px var(--accent-glow);
-    }
-
-    .primary-btn:hover::before { opacity: 1; }
-
-    .primary-btn:active { transform: translateY(0) scale(0.98); }
-
-    .secondary-btn {
-      background: var(--glass);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-      padding: 14px 32px;
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      backdrop-filter: blur(10px);
-    }
-
-    .secondary-btn:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.15);
-      transform: translateY(-2px);
-    }
-
-    .secondary-btn:active { transform: translateY(0) scale(0.98); }
-
-    .google-btn {
-      background: white;
-      color: #333;
-      border: none;
-      padding: 14px 32px;
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .google-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px -10px rgba(255,255,255,0.2);
-    }
-
-    .google-btn img { width: 20px; height: 20px; }
-
-    .btn-sm {
-      padding: 8px 18px;
-      font-size: 12px;
-      border-radius: var(--radius-xs);
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      padding: 8px 18px;
-      border-radius: var(--radius-xs);
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .btn-danger:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.4);
-    }
-
-    /* ========== MODALS ========== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      animation: fadeIn 0.25s ease forwards;
-    }
-
-    .modal-overlay.closing { animation: fadeOut 0.2s ease forwards; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-
-    .modal-content {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 40px;
-      width: 100%;
-      max-width: 420px;
-      animation: modalSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      position: relative;
-    }
-
-    .modal-overlay.closing .modal-content {
-      animation: modalSlideOut 0.2s ease forwards;
-    }
-
-    @keyframes modalSlide {
-      from { opacity: 0; transform: translateY(30px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes modalSlideOut {
-      from { opacity: 1; transform: translateY(0) scale(1); }
-      to { opacity: 0; transform: translateY(20px) scale(0.95); }
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px; right: 16px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 20px;
-      transition: var(--transition);
-      width: 32px; height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-    }
-
-    .modal-close:hover {
-      color: white;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .modal-title {
-      font-family: 'Geist', sans-serif;
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .modal-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xs);
-      padding: 12px 14px;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      color: white;
-      transition: var(--transition);
-      outline: none;
-    }
-
-    .form-group input:focus, .form-group select:focus {
-      border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .form-group input::placeholder { color: var(--text-muted); }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .divider span {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .form-switch {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .form-switch a {
-      color: var(--accent-light);
-      text-decoration: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .form-switch a:hover { color: #818cf8; text-decoration: underline; }
-
-    /* ========== APP SHELL ========== */
-    #app {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-    }
-
-    .app-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Geist', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    .nav-brand-icon {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-brand-icon iconify-icon { font-size: 16px; color: white; }
-
-    .nav-links {
-      display: flex;
-      gap: 4px;
-    }
-
-    .nav-link {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: var(--radius-xs);
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
-
-    .nav-link.active {
-      color: white;
-      background: rgba(99, 102, 241, 0.15);
-    }
-
-    .nav-link.active iconify-icon { color: var(--accent-light); }
-
-    .nav-user {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #06b6d4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .nav-avatar:hover { transform: scale(1.1); }
-
-    .app-main {
-      padding-top: 88px;
-      padding-bottom: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
-
-    /* ========== TAB VIEWS ========== */
-    .tab-view { animation: viewFadeIn 0.4s ease forwards; }
-
-    @keyframes viewFadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .view-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .view-header h2 {
-      font-family: 'Geist', sans-serif;
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-    }
-
-    .view-header-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    /* ========== SURVEY CARDS ========== */
-    .survey-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .survey-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      transition: var(--transition);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .survey-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .survey-card:hover {
-      border-color: rgba(255,255,255,0.12);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 50px -15px rgba(0,0,0,0.5);
-    }
-
-    .survey-card:hover::before { opacity: 1; }
-
-    .survey-card-category {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 14px;
-    }
-
-    .cat-tech { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
-    .cat-entertainment { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
-    .cat-sports { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-
-    .survey-card-question {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.4;
-      margin-bottom: 16px;
-    }
-
-    .survey-card-options {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .survey-option {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-xs);
-      padding: 10px 14px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .survey-option:hover {
-      background: rgba(99, 102, 241, 0.08);
-      border-color: rgba(99, 102, 241, 0.2);
-      color: white;
-    }
-
-    .survey-option.voted {
-      background: rgba(99, 102, 241, 0.12);
-      border-color: rgba(99, 102, 241, 0.3);
-      color: white;
-    }
-
-    .option-bar {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin-top: 6px;
-      overflow: hidden;
-    }
-
-    .option-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-      border-radius: 2px;
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .option-votes {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .survey-card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding-top: 14px;
-      border-top: 1px solid var(--border-light);
-    }
-
-    .survey-card-footer span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ========== EMPTY STATE ========== */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-    }
-
-    .empty-state iconify-icon {
-      font-size: 56px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      opacity: 0.4;
-    }
-
-    .empty-state h3 {
-      font-size: 18px;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-
-    .empty-state p {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* ========== FAB ========== */
-    .fab {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: white;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 40px -10px var(--accent-glow);
-      transition: var(--transition);
-      z-index: 50;
-    }
-
-    .fab:hover {
-      transform: scale(1.1) rotate(90deg);
-      box-shadow: 0 15px 50px -5px var(--accent-glow);
-    }
-
-    .fab:active { transform: scale(1) rotate(90deg); }
-
-    /* ========== SETTINGS ========== */
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .settings-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-    }
-
-    .settings-card h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .settings-card h3 iconify-icon { color: var(--accent-light); }
-
-    .setting-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .setting-row:last-child { border-bottom: none; }
-
-    .setting-label {
-      font-size: 14px;
-      font-weight: 400;
-    }
-
-    .setting-label small {
-      display: block;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Toggle Switch */
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      cursor: pointer;
-    }
-
-    .toggle input { display: none; }
-
-    .toggle-slider {
-      position: absolute;
-      inset: 0;
-      background: var(--border);
-      border-radius: 12px;
-      transition: var(--transition);
-    }
-
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      left: 3px; top: 3px;
-      background: white;
-      border-radius: 50%;
-      transition: var(--transition);
-    }
-
-    .toggle input:checked + .toggle-slider {
-      background: var(--accent);
-    }
-
-    .toggle input:checked + .toggle-slider::before {
-      transform: translateX(20px);
-    }
-
-    /* Range Slider */
-    .range-slider {
-      -webkit-appearance: none;
-      width: 120px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      outline: none;
-    }
-
-    .range-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--accent-light);
-      cursor: pointer;
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    /* Music Player */
-    .music-player {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      margin-top: 12px;
-    }
-
-    .music-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .music-thumb {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .music-thumb iconify-icon { font-size: 20px; color: white; }
-
-    .music-thumb.playing {
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-      50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
-    }
-
-    .music-meta h4 { font-size: 13px; font-weight: 500; }
-    .music-meta p { font-size: 11px; color: var(--text-muted); }
-
-    .music-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-    }
-
-    .music-btn {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 20px;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .music-btn:hover { color: white; }
-
-    .music-btn.play-btn {
-      width: 36px;
-      height: 36px;
-      background: var(--accent);
-      border-radius: 50%;
-      color: white;
-      font-size: 16px;
-    }
-
-    .music-btn.play-btn:hover { background: var(--accent-light); transform: scale(1.1); }
-
-    /* ========== SEARCH BAR ========== */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 14px;
-      width: 300px;
-      transition: var(--transition);
-    }
-
-    .search-bar:focus-within {
-      border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .search-bar iconify-icon { color: var(--text-muted); font-size: 18px; }
-
-    .search-bar input {
-      background: none;
-      border: none;
-      outline: none;
-      color: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      width: 100%;
-    }
-
-    .search-bar input::placeholder { color: var(--text-muted); }
-
-    .filter-select {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xs);
-      padding: 10px 14px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      color: white;
-      outline: none;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .filter-select:focus {
-      border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .filter-select option { background: var(--bg-card); }
-
-    /* ========== TOAST ========== */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .toast {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 20px;
-      font-size: 13px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 20px 50px -10px rgba(0,0,0,0.6);
-      animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      white-space: nowrap;
-    }
-
-    .toast.removing { animation: toastOut 0.3s ease forwards; }
-
-    .toast-success iconify-icon { color: var(--success); }
-    .toast-error iconify-icon { color: var(--danger); }
-    .toast-info iconify-icon { color: var(--accent-light); }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes toastOut {
-      from { opacity: 1; transform: translateY(0) scale(1); }
-      to { opacity: 0; transform: translateY(10px) scale(0.9); }
-    }
-
-    /* ========== SURVEY DETAIL MODAL ========== */
-    .detail-modal-body {
-      max-width: 520px;
-      width: 100%;
-    }
-
-    .detail-question {
-      font-family: 'Geist', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-
-    .detail-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      display: flex;
-      gap: 12px;
-    }
-
-    .detail-meta span { display: flex; align-items: center; gap: 4px; }
-
-    .detail-options { display: flex; flex-direction: column; gap: 10px; }
-
-    .detail-option {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-sm);
-      padding: 14px 18px;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .detail-option:hover {
-      border-color: rgba(99, 102, 241, 0.3);
-      background: rgba(99, 102, 241, 0.06);
-    }
-
-    .detail-option.selected {
-      border-color: rgba(99, 102, 241, 0.4);
-      background: rgba(99, 102, 241, 0.1);
-    }
-
-    .detail-option-text {
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .detail-option-percent {
-      font-size: 12px;
-      color: var(--accent-light);
-      font-weight: 600;
-    }
-
-    .detail-option-bar {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      background: rgba(99, 102, 241, 0.08);
-      border-radius: var(--radius-sm);
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* ========== CREATE SURVEY MODAL ========== */
-    .create-modal-body { max-width: 500px; width: 100%; }
-
-    .option-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .option-row input { flex: 1; }
-
-    .remove-option {
-      background: rgba(239, 68, 68, 0.1);
-      border: none;
-      color: #ef4444;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-      flex-shrink: 0;
-    }
-
-    .remove-option:hover { background: rgba(239, 68, 68, 0.2); }
-
-    .add-option-btn {
-      background: rgba(99, 102, 241, 0.08);
-      border: 1px dashed rgba(99, 102, 241, 0.3);
-      color: var(--accent-light);
-      width: 100%;
-      padding: 10px;
-      border-radius: var(--radius-xs);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .add-option-btn:hover {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: rgba(99, 102, 241, 0.5);
-    }
-
-    .is-public-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 16px;
-      padding: 14px;
-      background: rgba(255,255,255,0.02);
-      border-radius: var(--radius-xs);
-    }
-
-    .is-public-toggle span { font-size: 14px; }
-    .is-public-toggle small { font-size: 11px; color: var(--text-muted); display: block; }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      .app-nav { padding: 0 16px; }
-      .nav-links { gap: 2px; }
-      .nav-link { padding: 6px 10px; font-size: 12px; }
-      .nav-link span { display: none; }
-      .app-main { padding: 80px 16px 32px; }
-      .survey-grid { grid-template-columns: 1fr; }
-      .settings-grid { grid-template-columns: 1fr; }
-      .welcome-features { grid-template-columns: 1fr; }
-      .search-bar { width: 100%; }
-      .view-header { flex-direction: column; align-items: flex-start; }
-      .modal-content { padding: 28px; }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg-primary:#0a0a0a;--bg-secondary:#111;--bg-card:#161616;
+      --text-primary:#fff;--text-secondary:#a1a1aa;--text-muted:#71717a;
+      --accent:#4f46e5;--accent-light:#6366f1;--accent-glow:rgba(99,102,241,.4);
+      --accent-secondary:#06b6d4;--success:#22c55e;--danger:#ef4444;--warning:#f59e0b;
+      --border:rgba(255,255,255,.08);--border-light:rgba(255,255,255,.05);
+      --glass:rgba(255,255,255,.03);--radius:16px;--radius-sm:10px;--radius-xs:6px;
+      --transition:.3s cubic-bezier(.4,0,.2,1);--brightness:1;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden;filter:brightness(var(--brightness));transition:filter .3s}
+    ::selection{background:rgba(99,102,241,.3);color:#c7d2fe}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-primary)}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+    .hidden{display:none!important}
+
+    /* BG */
+    .bg-animation{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+    .bg-orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbFloat 20s ease-in-out infinite}
+    .bg-orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.15),transparent 70%);top:-200px;left:-100px}
+    .bg-orb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,.12),transparent 70%);bottom:-150px;right:-100px;animation-delay:-7s;animation-duration:25s}
+    .bg-orb-3{width:400px;height:400px;background:radial-gradient(circle,rgba(139,92,246,.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-14s;animation-duration:30s}
+    @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(80px,-60px) scale(1.1)}50%{transform:translate(-40px,80px) scale(.9)}75%{transform:translate(60px,40px) scale(1.05)}}
+    .bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 100%)}
+
+    /* Welcome */
+    #welcome{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+    .welcome-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--accent),var(--accent-secondary));border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:32px;animation:logoReveal 1s cubic-bezier(.16,1,.3,1) forwards;box-shadow:0 20px 60px -10px var(--accent-glow)}
+    .welcome-logo iconify-icon{font-size:36px;color:#fff}
+    @keyframes logoReveal{from{opacity:0;transform:scale(.5) rotate(-10deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+    .welcome-title{font-family:'Geist',sans-serif;font-size:clamp(36px,8vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;margin-bottom:16px;animation:slideUp .8s cubic-bezier(.16,1,.3,1) .15s forwards;opacity:0}
+    .welcome-title span{background:linear-gradient(135deg,#818cf8,#06b6d4,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .welcome-subtitle{font-size:clamp(16px,3vw,20px);font-weight:300;color:var(--text-secondary);max-width:500px;line-height:1.6;margin-bottom:48px;animation:slideUp .8s cubic-bezier(.16,1,.3,1) .3s forwards;opacity:0}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .welcome-buttons{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;animation:slideUp .8s cubic-bezier(.16,1,.3,1) .45s forwards;opacity:0}
+    .welcome-features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px;max-width:700px;width:100%;animation:slideUp .8s cubic-bezier(.16,1,.3,1) .6s forwards;opacity:0}
+    .feature-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:24px 16px;text-align:center;transition:var(--transition)}
+    .feature-card:hover{background:var(--bg-card);border-color:rgba(255,255,255,.12);transform:translateY(-4px)}
+    .feature-card iconify-icon{font-size:28px;color:var(--accent-light);margin-bottom:8px}
+    .feature-card h4{font-size:13px;font-weight:600;margin-bottom:4px}
+    .feature-card p{font-size:11px;color:var(--text-muted);line-height:1.4}
+
+    /* Buttons */
+    .primary-btn{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border:none;padding:14px 32px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+    .primary-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px -10px var(--accent-glow)}
+    .primary-btn:active{transform:translateY(0) scale(.98)}
+    .secondary-btn{background:var(--glass);color:var(--text-primary);border:1px solid var(--border);padding:14px 32px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:var(--transition);backdrop-filter:blur(10px)}
+    .secondary-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
+    .secondary-btn:active{transform:translateY(0) scale(.98)}
+    .btn-sm{padding:8px 18px;font-size:12px;border-radius:var(--radius-xs)}
+    .btn-danger{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);padding:8px 18px;border-radius:var(--radius-xs);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:var(--transition)}
+    .btn-danger:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4)}
+
+    /* Guest / Fallback button */
+    .guest-btn{background:rgba(255,255,255,.04);color:var(--text-secondary);border:1px solid var(--border);padding:12px 24px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:10px;width:100%;justify-content:center}
+    .guest-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+
+    /* Modals */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .25s ease forwards}
+    .modal-overlay.closing{animation:fadeOut .2s ease forwards}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+    .modal-content{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:100%;max-width:420px;animation:modalSlide .4s cubic-bezier(.16,1,.3,1) forwards;position:relative;max-height:90vh;overflow-y:auto}
+    .modal-overlay.closing .modal-content{animation:modalSlideOut .2s ease forwards}
+    @keyframes modalSlide{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes modalSlideOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(20px) scale(.95)}}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;transition:var(--transition);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+    .modal-close:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .modal-title{font-family:'Geist',sans-serif;font-size:24px;font-weight:600;margin-bottom:8px}
+    .modal-desc{font-size:13px;color:var(--text-muted);margin-bottom:28px;line-height:1.5}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+    .form-group input,.form-group select{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xs);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;color:#fff;transition:var(--transition);outline:none}
+    .form-group input:focus,.form-group select:focus{border-color:var(--accent-light);box-shadow:0 0 0 3px var(--accent-glow)}
+    .form-group input::placeholder{color:var(--text-muted)}
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .divider span{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+    .form-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted)}
+    .form-switch a{color:var(--accent-light);text-decoration:none;font-weight:500;cursor:pointer;transition:var(--transition)}
+    .form-switch a:hover{color:#818cf8;text-decoration:underline}
+
+    /* App */
+    .app-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-family:'Geist',sans-serif;font-weight:700;font-size:18px}
+    .nav-brand-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent-secondary));border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .nav-brand-icon iconify-icon{font-size:16px;color:#fff}
+    .nav-links{display:flex;gap:4px}
+    .nav-link{background:none;border:none;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--radius-xs);cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:6px}
+    .nav-link:hover{color:#fff;background:rgba(255,255,255,.05)}
+    .nav-link.active{color:#fff;background:rgba(99,102,241,.15)}
+    .nav-link.active iconify-icon{color:var(--accent-light)}
+    .nav-user{display:flex;align-items:center;gap:12px}
+    .nav-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);background:linear-gradient(135deg,#6366f1,#06b6d4);color:#fff}
+    .nav-avatar:hover{transform:scale(1.1)}
+    .nav-avatar img{width:100%;height:100%;object-fit:cover}
+    .app-main{padding-top:88px;padding-bottom:40px;max-width:1200px;margin:0 auto;padding-left:24px;padding-right:24px}
+
+    .tab-view{animation:viewFadeIn .4s ease forwards}
+    @keyframes viewFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px}
+    .view-header h2{font-family:'Geist',sans-serif;font-size:28px;font-weight:600;letter-spacing:-.03em}
+    .view-header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+    /* Guest Banner */
+    .guest-banner{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--radius-sm);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--warning);font-weight:500}
+    .guest-banner iconify-icon{font-size:20px;flex-shrink:0}
+    .guest-banner button{margin-left:auto;background:var(--accent);color:#fff;border:none;padding:6px 14px;border-radius:var(--radius-xs);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap}
+    .guest-banner button:hover{background:var(--accent-light)}
+
+    .survey-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+    .survey-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:var(--transition);cursor:pointer;position:relative;overflow:hidden}
+    .survey-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-secondary));opacity:0;transition:var(--transition)}
+    .survey-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-4px);box-shadow:0 20px 50px -15px rgba(0,0,0,.5)}
+    .survey-card:hover::before{opacity:1}
+    .survey-card-category{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:20px;margin-bottom:14px}
+    .survey-card-question{font-size:16px;font-weight:600;line-height:1.4;margin-bottom:6px}
+    .survey-card-meta{font-size:11px;color:var(--text-muted);margin-bottom:16px;display:flex;gap:12px;align-items:center}
+    .survey-card-meta span{display:flex;align-items:center;gap:3px}
+    .survey-card-options{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+    .survey-option-preview{background:rgba(255,255,255,.03);border:1px solid var(--border-light);border-radius:var(--radius-xs);padding:8px 12px;font-size:13px;color:var(--text-secondary);transition:var(--transition);position:relative;overflow:hidden}
+    .survey-option-preview .bar-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(99,102,241,.08);border-radius:var(--radius-xs);transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .survey-option-preview .opt-inner{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+    .survey-option-preview .opt-pct{font-size:11px;color:var(--accent-light);font-weight:600}
+    .survey-card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-muted);padding-top:14px;border-top:1px solid var(--border-light)}
+    .survey-card-footer span{display:flex;align-items:center;gap:4px}
+    .online-dot{width:6px;height:6px;background:var(--success);border-radius:50%;display:inline-block;animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+    .empty-state{text-align:center;padding:80px 20px}
+    .empty-state iconify-icon{font-size:56px;color:var(--text-muted);margin-bottom:16px;opacity:.4}
+    .empty-state h3{font-size:18px;font-weight:500;margin-bottom:8px}
+    .empty-state p{font-size:13px;color:var(--text-muted)}
+
+    .fab{position:fixed;bottom:28px;right:28px;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border:none;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 40px -10px var(--accent-glow);transition:var(--transition);z-index:50}
+    .fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 15px 50px -5px var(--accent-glow)}
+
+    /* Settings */
+    .settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .settings-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+    .settings-card h3{font-size:16px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .settings-card h3 iconify-icon{color:var(--accent-light)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light)}
+    .setting-row:last-child{border-bottom:none}
+    .setting-label{font-size:14px}.setting-label small{display:block;font-size:11px;color:var(--text-muted);margin-top:2px}
+    .toggle{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0}
+    .toggle input{display:none}
+    .toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:12px;transition:var(--transition)}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:var(--transition)}
+    .toggle input:checked+.toggle-slider{background:var(--accent)}
+    .toggle input:checked+.toggle-slider::before{transform:translateX(20px)}
+    .range-slider{-webkit-appearance:none;width:120px;height:4px;background:var(--border);border-radius:2px;outline:none}
+    .range-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent-light);cursor:pointer;box-shadow:0 0 10px var(--accent-glow)}
+
+    /* Spotify */
+    .spotify-embed{border-radius:12px;overflow:hidden;margin-top:12px}
+    .spotify-embed iframe{display:block}
+    .spotify-selector{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .spotify-chip{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:var(--transition)}
+    .spotify-chip:hover,.spotify-chip.active{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.3);color:var(--accent-light)}
+
+    /* Detail modal */
+    .detail-modal-body{max-width:520px;width:100%}
+    .detail-question{font-family:'Geist',sans-serif;font-size:22px;font-weight:600;margin-bottom:6px;line-height:1.3}
+    .detail-meta{font-size:12px;color:var(--text-muted);margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap}
+    .detail-meta span{display:flex;align-items:center;gap:4px}
+    .detail-options{display:flex;flex-direction:column;gap:10px}
+    .detail-option{background:rgba(255,255,255,.03);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px 18px;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+    .detail-option:hover{border-color:rgba(99,102,241,.3);background:rgba(99,102,241,.06)}
+    .detail-option.voted{border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.1)}
+    .detail-option.guest-locked{cursor:not-allowed;opacity:.6}
+    .detail-option.guest-locked:hover{border-color:var(--border-light);background:rgba(255,255,255,.03)}
+    .detail-option-text{font-size:14px;font-weight:500;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+    .detail-option-percent{font-size:12px;color:var(--accent-light);font-weight:600}
+    .detail-option-bar{position:absolute;left:0;top:0;bottom:0;background:rgba(99,102,241,.08);border-radius:var(--radius-sm);transition:width .8s cubic-bezier(.16,1,.3,1)}
+
+    /* Create modal */
+    .create-modal-body{max-width:500px;width:100%}
+    .option-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    .option-row input{flex:1}
+    .remove-option{background:rgba(239,68,68,.1);border:none;color:#ef4444;width:32px;height:32px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition);flex-shrink:0}
+    .remove-option:hover{background:rgba(239,68,68,.2)}
+    .add-option-btn{background:rgba(99,102,241,.08);border:1px dashed rgba(99,102,241,.3);color:var(--accent-light);width:100%;padding:10px;border-radius:var(--radius-xs);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:6px}
+    .add-option-btn:hover{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.5)}
+    .is-public-toggle{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:14px;background:rgba(255,255,255,.02);border-radius:var(--radius-xs)}
+    .is-public-toggle span{font-size:14px}.is-public-toggle small{font-size:11px;color:var(--text-muted);display:block}
+
+    .search-bar{display:flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;width:260px;transition:var(--transition)}
+    .search-bar:focus-within{border-color:var(--accent-light);box-shadow:0 0 0 3px var(--accent-glow)}
+    .search-bar iconify-icon{color:var(--text-muted);font-size:18px}
+    .search-bar input{background:none;border:none;outline:none;color:#fff;font-family:'Inter',sans-serif;font-size:13px;width:100%}
+    .search-bar input::placeholder{color:var(--text-muted)}
+    .filter-select{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px 14px;font-family:'Inter',sans-serif;font-size:13px;color:#fff;outline:none;cursor:pointer;transition:var(--transition)}
+    .filter-select:focus{border-color:var(--accent-light)}
+    .filter-select option{background:var(--bg-card)}
+
+    /* Toast */
+    .toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;align-items:center}
+    .toast{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 20px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:0 20px 50px -10px rgba(0,0,0,.6);animation:toastIn .4s cubic-bezier(.16,1,.3,1) forwards;white-space:nowrap}
+    .toast.removing{animation:toastOut .3s ease forwards}
+    .toast-success iconify-icon{color:var(--success)}.toast-error iconify-icon{color:var(--danger)}.toast-info iconify-icon{color:var(--accent-light)}.toast-warning iconify-icon{color:var(--warning)}
+    @keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes toastOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(10px) scale(.9)}}
+
+    .live-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#22c55e;margin-left:auto}
+
+    @media(max-width:768px){
+      .app-nav{padding:0 16px}.nav-links{gap:2px}.nav-link{padding:6px 10px;font-size:12px}.nav-link span{display:none}
+      .app-main{padding:80px 16px 32px}.survey-grid{grid-template-columns:1fr}.settings-grid{grid-template-columns:1fr}
+      .welcome-features{grid-template-columns:1fr}.search-bar{width:100%}.view-header{flex-direction:column;align-items:flex-start}
+      .modal-content{padding:28px}
     }
   </style>
 </head>
 <body>
 
-  <!-- Animated Background -->
-  <div class="bg-animation">
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-grid"></div>
-  </div>
-
-  <!-- Toast Container -->
+  <div class="bg-animation"><div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div><div class="bg-orb bg-orb-3"></div><div class="bg-grid"></div></div>
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- ========== WELCOME SECTION ========== -->
+  <!-- WELCOME -->
   <section id="welcome">
-    <div class="welcome-logo">
-      <iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon>
-    </div>
+    <div class="welcome-logo"><iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon></div>
     <h1 class="welcome-title"><span>Métrica</span> Survey</h1>
-    <p class="welcome-subtitle">Crea y responde encuestas de forma rápida y segura. Descubre lo que piensa la comunidad.</p>
+    <p class="welcome-subtitle">Crea y responde encuestas en tiempo real. Descubre lo que piensa la comunidad.</p>
     <div class="welcome-buttons">
-      <button class="primary-btn" onclick="openModal('login')">
-        <iconify-icon icon="solar:login-3-bold-duotone" style="margin-right:6px;vertical-align:middle"></iconify-icon>
-        Iniciar Sesión
-      </button>
-      <button class="secondary-btn" onclick="openModal('register')">
-        <iconify-icon icon="solar:user-plus-bold-duotone" style="margin-right:6px;vertical-align:middle"></iconify-icon>
-        Registrarse
-      </button>
+      <button class="primary-btn" onclick="openModal('login')"><iconify-icon icon="solar:login-3-bold-duotone" style="margin-right:6px;vertical-align:middle"></iconify-icon>Iniciar Sesión</button>
+      <button class="secondary-btn" onclick="openModal('register')"><iconify-icon icon="solar:user-plus-bold-duotone" style="margin-right:6px;vertical-align:middle"></iconify-icon>Registrarse</button>
     </div>
     <div class="welcome-features">
-      <div class="feature-card">
-        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-        <h4>Crea Encuestas</h4>
-        <p>Diseña encuestas con múltiples opciones en segundos</p>
-      </div>
-      <div class="feature-card">
-        <iconify-icon icon="solar:vote-bold-duotone"></iconify-icon>
-        <h4>Vota y Opina</h4>
-        <p>Participa en encuestas públicas de la comunidad</p>
-      </div>
-      <div class="feature-card">
-        <iconify-icon icon="solar:chart-bold-duotone"></iconify-icon>
-        <h4>Resultados en Vivo</h4>
-        <p>Ve los resultados actualizados en tiempo real</p>
-      </div>
+      <div class="feature-card"><iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon><h4>Crea Encuestas</h4><p>Personaliza categorías y opciones</p></div>
+      <div class="feature-card"><iconify-icon icon="solar:vote-bold-duotone"></iconify-icon><h4>Vota en Vivo</h4><p>Resultados al instante</p></div>
+      <div class="feature-card"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon><h4>Comunidad</h4><p>Encuestas públicas para todos</p></div>
     </div>
   </section>
 
-  <!-- ========== APP (hidden until auth) ========== -->
+  <!-- APP -->
   <div id="app" class="hidden">
     <nav class="app-nav">
-      <div class="nav-brand">
-        <div class="nav-brand-icon">
-          <iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon>
-        </div>
-        Métrica
-      </div>
+      <div class="nav-brand"><div class="nav-brand-icon"><iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon></div>Métrica</div>
       <div class="nav-links">
-        <button class="nav-link active" data-tab="dashboard" onclick="switchTab('dashboard')">
-          <iconify-icon icon="solar:home-smile-bold-duotone"></iconify-icon>
-          <span>Dashboard</span>
-        </button>
-        <button class="nav-link" data-tab="public" onclick="switchTab('public')">
-          <iconify-icon icon="solar:global-bold-duotone"></iconify-icon>
-          <span>Públicas</span>
-        </button>
-        <button class="nav-link" data-tab="settings" onclick="switchTab('settings')">
-          <iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
-          <span>Ajustes</span>
-        </button>
+        <button class="nav-link active" data-tab="dashboard" onclick="switchTab('dashboard')"><iconify-icon icon="solar:home-smile-bold-duotone"></iconify-icon><span>Dashboard</span></button>
+        <button class="nav-link" data-tab="public" onclick="switchTab('public')"><iconify-icon icon="solar:global-bold-duotone"></iconify-icon><span>Públicas</span></button>
+        <button class="nav-link" data-tab="settings" onclick="switchTab('settings')"><iconify-icon icon="solar:settings-bold-duotone"></iconify-icon><span>Ajustes</span></button>
       </div>
       <div class="nav-user">
         <div class="nav-avatar" id="nav-avatar" onclick="switchTab('settings')">?</div>
-        <button class="secondary-btn btn-sm" onclick="logout()">
-          <iconify-icon icon="solar:logout-2-bold-duotone" style="vertical-align:middle"></iconify-icon>
-        </button>
+        <button class="secondary-btn btn-sm" onclick="logout()"><iconify-icon icon="solar:logout-2-bold-duotone" style="vertical-align:middle"></iconify-icon></button>
       </div>
     </nav>
 
     <main class="app-main">
-      <!-- Dashboard Tab -->
+      <!-- Guest Banner (only shown for guests) -->
+      <div id="guest-banner" class="guest-banner hidden">
+        <iconify-icon icon="solar:shield-warning-bold-duotone"></iconify-icon>
+        Modo Invitado — Solo puedes ver encuestas. Para crear y votar, inicia sesión.
+        <button onclick="logout()">Iniciar sesión</button>
+      </div>
+
+      <!-- Dashboard -->
       <div id="tab-dashboard" class="tab-view">
         <div class="view-header">
           <h2>Mis Encuestas</h2>
-          <div class="view-header-actions">
-            <button class="primary-btn btn-sm" onclick="openModal('create')">
-              <iconify-icon icon="solar:add-circle-bold-duotone" style="vertical-align:middle;margin-right:4px"></iconify-icon>
-              Crear Encuesta
-            </button>
-          </div>
+          <button id="btn-create-survey" class="primary-btn btn-sm" onclick="openModal('create')"><iconify-icon icon="solar:add-circle-bold-duotone" style="vertical-align:middle;margin-right:4px"></iconify-icon>Crear</button>
         </div>
         <div id="my-surveys" class="survey-grid"></div>
       </div>
 
-      <!-- Public Tab -->
+      <!-- Public -->
       <div id="tab-public" class="tab-view hidden">
         <div class="view-header">
-          <h2>Encuestas Públicas</h2>
+          <h2 style="display:flex;align-items:center;gap:10px">Encuestas Públicas <span class="live-badge"><span class="online-dot"></span>En vivo</span></h2>
           <div class="view-header-actions">
-            <div class="search-bar">
-              <iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>
-              <input type="text" id="search-input" placeholder="Buscar encuestas…" oninput="filterSurveys()" />
-            </div>
-            <select class="filter-select" id="category-filter" onchange="filterSurveys()">
-              <option value="">Todas</option>
-              <option value="Tecnología">Tecnología</option>
-              <option value="Entretenimiento">Entretenimiento</option>
-              <option value="Deportes">Deportes</option>
-            </select>
+            <div class="search-bar"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon><input type="text" id="search-input" placeholder="Buscar…" oninput="filterSurveys()"/></div>
+            <select class="filter-select" id="category-filter" onchange="filterSurveys()"><option value="">Todas</option></select>
           </div>
         </div>
         <div id="public-list" class="survey-grid"></div>
       </div>
 
-      <!-- Settings Tab -->
+      <!-- Settings -->
       <div id="tab-settings" class="tab-view hidden">
-        <div class="view-header">
-          <h2>Configuración</h2>
-        </div>
+        <div class="view-header"><h2>Configuración</h2></div>
         <div class="settings-grid">
-          <!-- Profile -->
           <div class="settings-card">
             <h3><iconify-icon icon="solar:user-bold-duotone"></iconify-icon> Perfil</h3>
-            <div class="form-group">
-              <label>Nombre de usuario</label>
-              <input type="text" id="settings-username" placeholder="Tu nombre" />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" id="settings-email" placeholder="tu@email.com" />
-            </div>
-            <button class="primary-btn btn-sm" style="margin-top:8px" onclick="saveProfile()">Guardar Cambios</button>
+            <div class="form-group"><label>Nombre</label><input type="text" id="settings-username" placeholder="Tu nombre"/></div>
+            <div class="form-group"><label>Email</label><input type="email" id="settings-email" placeholder="tu@email.com"/></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:4px" id="settings-account-type"></div>
+            <button class="primary-btn btn-sm" onclick="saveProfile()">Guardar</button>
           </div>
-
-          <!-- Appearance -->
           <div class="settings-card">
             <h3><iconify-icon icon="solar:palette-bold-duotone"></iconify-icon> Apariencia</h3>
-            <div class="setting-row">
-              <div class="setting-label">
-                Brillo
-                <small>Ajusta el brillo de la interfaz</small>
-              </div>
-              <input type="range" class="range-slider" id="brightness-slider" min="40" max="120" value="100" oninput="setBrightness(this.value)" />
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">
-                Animaciones
-                <small>Activa o desactiva las animaciones</small>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="animations-toggle" checked onchange="toggleAnimations(this.checked)" />
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
+            <div class="setting-row"><div class="setting-label">Brillo<small>Ajusta la intensidad</small></div><input type="range" class="range-slider" id="brightness-slider" min="40" max="120" value="100" oninput="setBrightness(this.value)"/></div>
+            <div class="setting-row"><div class="setting-label">Animaciones<small>Efectos visuales</small></div><label class="toggle"><input type="checkbox" id="animations-toggle" checked onchange="toggleAnimations(this.checked)"/><span class="toggle-slider"></span></label></div>
           </div>
-
-          <!-- Music -->
           <div class="settings-card">
             <h3><iconify-icon icon="solar:music-note-bold-duotone"></iconify-icon> Música</h3>
-            <div class="setting-row">
-              <div class="setting-label">
-                Música de fondo
-                <small>Ambient music mientras navegas</small>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="music-toggle" onchange="toggleMusic(this.checked)" />
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">Volumen</div>
-              <input type="range" class="range-slider" id="volume-slider" min="0" max="100" value="40" oninput="setVolume(this.value)" />
-            </div>
-            <div class="music-player">
-              <div class="music-info">
-                <div class="music-thumb" id="music-thumb">
-                  <iconify-icon icon="solar:music-note-2-bold-duotone"></iconify-icon>
-                </div>
-                <div class="music-meta">
-                  <h4 id="music-title">Lo-Fi Beats</h4>
-                  <p id="music-artist">Chill Study</p>
-                </div>
-              </div>
-              <div class="music-controls">
-                <button class="music-btn" onclick="prevTrack()">
-                  <iconify-icon icon="solar:skip-previous-bold-duotone"></iconify-icon>
-                </button>
-                <button class="music-btn play-btn" id="play-btn" onclick="togglePlay()">
-                  <iconify-icon icon="solar:play-bold" id="play-icon"></iconify-icon>
-                </button>
-                <button class="music-btn" onclick="nextTrack()">
-                  <iconify-icon icon="solar:skip-next-bold-duotone"></iconify-icon>
-                </button>
-              </div>
-            </div>
+            <div class="setting-row"><div class="setting-label">Spotify<small>Reproduce mientras navegas</small></div></div>
+            <div class="spotify-selector" id="spotify-selector"></div>
+            <div class="spotify-embed" id="spotify-embed"></div>
           </div>
-
-          <!-- Danger Zone -->
-          <div class="settings-card" style="border-color: rgba(239,68,68,0.15);">
+          <div class="settings-card" id="danger-zone-card" style="border-color:rgba(239,68,68,.15)">
             <h3 style="color:#ef4444"><iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon> Zona Peligrosa</h3>
-            <div class="setting-row">
-              <div class="setting-label">
-                Eliminar todas mis encuestas
-                <small>Esta acción no se puede deshacer</small>
-              </div>
-              <button class="btn-danger" onclick="deleteAllSurveys()">Eliminar</button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">
-                Eliminar cuenta
-                <small>Se borrarán todos tus datos</small>
-              </div>
-              <button class="btn-danger" onclick="deleteAccount()">Eliminar</button>
-            </div>
+            <div class="setting-row"><div class="setting-label">Eliminar mis encuestas<small>No se puede deshacer</small></div><button class="btn-danger" onclick="deleteAllSurveys()">Eliminar</button></div>
+            <div class="setting-row"><div class="setting-label">Eliminar cuenta<small>Se borrarán todos tus datos</small></div><button class="btn-danger" onclick="deleteAccount()">Eliminar</button></div>
           </div>
         </div>
       </div>
     </main>
 
-    <!-- FAB -->
-    <button class="fab" onclick="openModal('create')" title="Crear encuesta">
-      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
-    </button>
+    <button class="fab" id="fab-btn" onclick="openModal('create')"><iconify-icon icon="solar:add-circle-bold"></iconify-icon></button>
   </div>
 
-  <!-- ========== MODALS CONTAINER ========== -->
   <div id="modals-root"></div>
 
   <script>
-    // ==========================================
-    // DATA STORE
-    // ==========================================
+    // ============================================================
+    // 🔑 GOOGLE SIGN-IN CONFIG
+    // ============================================================
+    const GOOGLE_CLIENT_ID = ''; // ← TU CLIENT ID AQUÍ
+
+    // ============================================================
+    // DATA
+    // ============================================================
     let currentUser = JSON.parse(localStorage.getItem('metrica_user')) || null;
     let surveys = JSON.parse(localStorage.getItem('metrica_surveys')) || [];
     let votes = JSON.parse(localStorage.getItem('metrica_votes')) || {};
 
-    // Seed some public surveys if empty
+    const channel = new BroadcastChannel('metrica_sync');
+    channel.onmessage = (e) => {
+      if (e.data.type === 'surveys_updated') {
+        surveys = e.data.surveys;
+        localStorage.setItem('metrica_surveys', JSON.stringify(surveys));
+        renderAll();
+      }
+      if (e.data.type === 'vote') {
+        const { surveyId, option } = e.data;
+        const s = surveys.find(x => x.id === surveyId);
+        if (s) { s.votes[option] = (s.votes[option] || 0) + 1; saveSurveys(); renderAll(); }
+      }
+    };
+
     if (surveys.length === 0) {
-      surveys = [
-        {
-          id: 's1', question: '¿Qué lenguaje de programación prefieres?', category: 'Tecnología',
-          options: ['JavaScript', 'Python', 'Rust', 'Go'],
-          votes: { 'JavaScript': 45, 'Python': 52, 'Rust': 28, 'Go': 15 },
-          author: 'TechFan42', public: true, createdAt: Date.now() - 86400000
-        },
-        {
-          id: 's2', question: '¿Cuál es tu serie favorita del 2024?', category: 'Entretenimiento',
-          options: ['The Bear', 'Shōgun', 'Fallout', 'Ripley'],
-          votes: { 'The Bear': 33, 'Shōgun': 48, 'Fallout': 29, 'Ripley': 12 },
-          author: 'CinemaLover', public: true, createdAt: Date.now() - 43200000
-        },
-        {
-          id: 's3', question: '¿Quién ganará la Champions esta temporada?', category: 'Deportes',
-          options: ['Real Madrid', 'Manchester City', 'Bayern Munich', 'Arsenal'],
-          votes: { 'Real Madrid': 67, 'Manchester City': 41, 'Bayern Munich': 23, 'Arsenal': 19 },
-          author: 'Futbolero', public: true, createdAt: Date.now() - 21600000
-        },
-        {
-          id: 's4', question: '¿Qué framework frontend usas más?', category: 'Tecnología',
-          options: ['React', 'Vue', 'Angular', 'Svelte'],
-          votes: { 'React': 61, 'Vue': 34, 'Angular': 22, 'Svelte': 18 },
-          author: 'DevGuru', public: true, createdAt: Date.now() - 3600000
-        },
-        {
-          id: 's5', question: '¿Qué deporte practicas con más frecuencia?', category: 'Deportes',
-          options: ['Fútbol', 'Baloncesto', 'Natación', 'Running'],
-          votes: { 'Fútbol': 55, 'Baloncesto': 30, 'Natación': 18, 'Running': 42 },
-          author: 'SportLife', public: true, createdAt: Date.now() - 7200000
-        },
-        {
-          id: 's6', question: '¿Cuál es tu plataforma de streaming favorita?', category: 'Entretenimiento',
-          options: ['Netflix', 'HBO Max', 'Disney+', 'Prime Video'],
-          votes: { 'Netflix': 50, 'HBO Max': 38, 'Disney+': 22, 'Prime Video': 15 },
-          author: 'StreamerPro', public: true, createdAt: Date.now() - 14400000
-        }
+      const seed = [
+        { q: '¿Qué lenguaje de programación prefieres?', cat: 'Tecnología', opts: ['JavaScript','Python','Rust','Go'], author: 'TechFan42' },
+        { q: '¿Cuál es tu serie favorita del 2024?', cat: 'Entretenimiento', opts: ['The Bear','Shōgun','Fallout','Ripley'], author: 'CinemaLover' },
+        { q: '¿Quién ganará la Champions?', cat: 'Deportes', opts: ['Real Madrid','Manchester City','Bayern Munich','Arsenal'], author: 'Futbolero' },
+        { q: '¿Qué framework frontend usas?', cat: 'Tecnología', opts: ['React','Vue','Angular','Svelte'], author: 'DevGuru' },
+        { q: '¿Qué deporte practicas más?', cat: 'Deportes', opts: ['Fútbol','Baloncesto','Natación','Running'], author: 'SportLife' },
+        { q: '¿Plataforma de streaming favorita?', cat: 'Entretenimiento', opts: ['Netflix','HBO Max','Disney+','Prime Video'], author: 'StreamerPro' },
+        { q: '¿Tu IDE favorito?', cat: 'Tecnología', opts: ['VS Code','WebStorm','Vim/Neovim','Cursor'], author: 'CodeNinja' },
+        { q: '¿Comida favorita del mundo?', cat: 'Gastronomía', opts: ['Sushi','Pizza','Tacos','Paella'], author: 'Foodie' },
       ];
+      seed.forEach((s, i) => {
+        const votesObj = {};
+        s.opts.forEach(o => votesObj[o] = 0);
+        surveys.push({
+          id: 'seed_' + i, question: s.q, category: s.cat, options: s.opts,
+          votes: votesObj, author: s.author, public: true, createdAt: Date.now() - (i * 3600000)
+        });
+      });
       saveSurveys();
     }
 
     function saveSurveys() {
       localStorage.setItem('metrica_surveys', JSON.stringify(surveys));
+      try { channel.postMessage({ type: 'surveys_updated', surveys }); } catch(e) {}
     }
-    function saveVotes() {
-      localStorage.setItem('metrica_votes', JSON.stringify(votes));
-    }
-    function saveUser() {
-      localStorage.setItem('metrica_user', JSON.stringify(currentUser));
-    }
+    function saveVotes() { localStorage.setItem('metrica_votes', JSON.stringify(votes)); }
+    function saveUser() { localStorage.setItem('metrica_user', JSON.stringify(currentUser)); }
 
-    // ==========================================
-    // MUSIC SYSTEM
-    // ==========================================
-    const tracks = [
-      { title: 'Lo-Fi Beats', artist: 'Chill Study', freq: [261.63, 329.63, 392.00] },
-      { title: 'Ambient Waves', artist: 'Deep Focus', freq: [220.00, 277.18, 329.63] },
-      { title: 'Night Drive', artist: 'Synthwave', freq: [196.00, 246.94, 293.66] },
+    function isGuest() { return currentUser && currentUser.isGuest === true; }
+
+    // ============================================================
+    // SPOTIFY
+    // ============================================================
+    const spotifyPlaylists = [
+      { name: 'Lo-Fi Beats', id: '37i9dQZF1DX8Uebhn9wzrS' },
+      { name: 'Chill Hits', id: '37i9dQZF1DX4WYpdgoIcn6' },
+      { name: 'Deep Focus', id: '37i9dQZF1DX6R7QUWePReA' },
+      { name: 'Peaceful Piano', id: '37i9dQZF1DX4sWSpwq3LiO' },
+      { name: 'Coding Mode', id: '37i9dQZF1DX5g856aiKiDS' },
     ];
-    let currentTrack = 0;
-    let audioCtx = null;
-    let gainNode = null;
-    let isPlaying = false;
-    let oscillators = [];
 
-    function initAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0.04;
-      gainNode.connect(audioCtx.destination);
+    function initSpotify() {
+      const selector = document.getElementById('spotify-selector');
+      if (!selector) return;
+      selector.innerHTML = spotifyPlaylists.map((p, i) =>
+        `<button class="spotify-chip ${i === 0 ? 'active' : ''}" onclick="selectPlaylist(${i})">${p.name}</button>`
+      ).join('');
+      loadSpotifyEmbed(0);
     }
 
-    function playTrack(index) {
-      stopOscillators();
-      if (!audioCtx) initAudio();
-      const track = tracks[index];
-      document.getElementById('music-title').textContent = track.title;
-      document.getElementById('music-artist').textContent = track.artist;
-
-      track.freq.forEach((f, i) => {
-        const osc = audioCtx.createOscillator();
-        const oscGain = audioCtx.createGain();
-        osc.type = i === 0 ? 'sine' : 'triangle';
-        osc.frequency.value = f;
-        oscGain.gain.value = i === 0 ? 0.5 : 0.2;
-        osc.connect(oscGain);
-        oscGain.connect(gainNode);
-        osc.start();
-        oscillators.push({ osc, gain: oscGain });
-      });
-      isPlaying = true;
-      updatePlayButton();
+    function selectPlaylist(i) {
+      document.querySelectorAll('.spotify-chip').forEach((c, j) => c.classList.toggle('active', j === i));
+      loadSpotifyEmbed(i);
     }
 
-    function stopOscillators() {
-      oscillators.forEach(({ osc }) => { try { osc.stop(); } catch(e) {} });
-      oscillators = [];
+    function loadSpotifyEmbed(i) {
+      const container = document.getElementById('spotify-embed');
+      if (!container) return;
+      container.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${spotifyPlaylists[i].id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
     }
 
-    function togglePlay() {
-      if (!audioCtx) initAudio();
-      if (isPlaying) {
-        stopOscillators();
-        isPlaying = false;
-      } else {
-        playTrack(currentTrack);
-      }
-      updatePlayButton();
-    }
-
-    function updatePlayButton() {
-      const icon = document.getElementById('play-icon');
-      const thumb = document.getElementById('music-thumb');
-      if (isPlaying) {
-        icon.setAttribute('icon', 'solar:pause-bold');
-        thumb.classList.add('playing');
-      } else {
-        icon.setAttribute('icon', 'solar:play-bold');
-        thumb.classList.remove('playing');
-      }
-    }
-
-    function nextTrack() {
-      currentTrack = (currentTrack + 1) % tracks.length;
-      if (isPlaying) playTrack(currentTrack);
-      else {
-        document.getElementById('music-title').textContent = tracks[currentTrack].title;
-        document.getElementById('music-artist').textContent = tracks[currentTrack].artist;
-      }
-    }
-
-    function prevTrack() {
-      currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
-      if (isPlaying) playTrack(currentTrack);
-      else {
-        document.getElementById('music-title').textContent = tracks[currentTrack].title;
-        document.getElementById('music-artist').textContent = tracks[currentTrack].artist;
-      }
-    }
-
-    function setVolume(val) {
-      if (gainNode) {
-        gainNode.gain.value = (val / 100) * 0.1;
-      }
-    }
-
-    function toggleMusic(on) {
-      if (on) {
-        if (!audioCtx) initAudio();
-        playTrack(currentTrack);
-      } else {
-        stopOscillators();
-        isPlaying = false;
-        updatePlayButton();
-      }
-    }
-
-    // ==========================================
-    // BRIGHTNESS & ANIMATIONS
-    // ==========================================
-    function setBrightness(val) {
-      document.documentElement.style.setProperty('--brightness', val / 100);
-    }
-
+    // ============================================================
+    // SETTINGS
+    // ============================================================
+    function setBrightness(val) { document.documentElement.style.setProperty('--brightness', val / 100); }
     function toggleAnimations(on) {
-      document.querySelectorAll('.bg-orb').forEach(orb => {
-        orb.style.animationPlayState = on ? 'running' : 'paused';
-      });
+      document.querySelectorAll('.bg-orb').forEach(orb => { orb.style.animationPlayState = on ? 'running' : 'paused'; });
     }
 
-    // ==========================================
-    // TOAST SYSTEM
-    // ==========================================
+    // ============================================================
+    // TOAST
+    // ============================================================
     function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      const icons = { success: 'solar:check-circle-bold-duotone', error: 'solar:close-circle-bold-duotone', info: 'solar:info-circle-bold-duotone' };
-      toast.className = `toast toast-${type}`;
-      toast.innerHTML = `<iconify-icon icon="${icons[type]}"></iconify-icon> ${message}`;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.classList.add('removing');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+      const c = document.getElementById('toast-container');
+      const icons = { success: 'solar:check-circle-bold-duotone', error: 'solar:close-circle-bold-duotone', info: 'solar:info-circle-bold-duotone', warning: 'solar:shield-warning-bold-duotone' };
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerHTML = `<iconify-icon icon="${icons[type]}"></iconify-icon> ${message}`;
+      c.appendChild(t);
+      setTimeout(() => { t.classList.add('removing'); setTimeout(() => t.remove(), 300); }, 3500);
     }
 
-    // ==========================================
-    // MODAL SYSTEM
-    // ==========================================
+    // ============================================================
+    // CATEGORY COLORS
+    // ============================================================
+    const catColors = [
+      { bg: 'rgba(99,102,241,.15)', text: '#818cf8' },
+      { bg: 'rgba(236,72,153,.15)', text: '#f472b6' },
+      { bg: 'rgba(34,197,94,.15)', text: '#4ade80' },
+      { bg: 'rgba(245,158,11,.15)', text: '#fbbf24' },
+      { bg: 'rgba(6,182,212,.15)', text: '#22d3ee' },
+      { bg: 'rgba(168,85,247,.15)', text: '#c084fc' },
+      { bg: 'rgba(251,146,60,.15)', text: '#fb923c' },
+      { bg: 'rgba(244,63,94,.15)', text: '#fb7185' },
+    ];
+    function getCatColor(cat) {
+      let h = 0;
+      for (let i = 0; i < cat.length; i++) h = cat.charCodeAt(i) + ((h << 5) - h);
+      return catColors[Math.abs(h) % catColors.length];
+    }
+
+    // ============================================================
+    // TIME
+    // ============================================================
+    function formatTime(ts) {
+      const d = new Date(ts);
+      const now = new Date();
+      const time = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      if (d.toDateString() === now.toDateString()) return `Hoy, ${time}`;
+      const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+      if (d.toDateString() === yesterday.toDateString()) return `Ayer, ${time}`;
+      return `${d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}, ${time}`;
+    }
+
+    // ============================================================
+    // GOOGLE SIGN-IN
+    // ============================================================
+    function initGoogleAuth() {
+      if (!GOOGLE_CLIENT_ID || typeof google === 'undefined') return;
+      try {
+        google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleResponse, auto_select: false });
+      } catch(e) {}
+    }
+
+    function handleGoogleResponse(response) {
+      try {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        currentUser = {
+          username: payload.name || payload.given_name || 'Usuario',
+          email: payload.email || '',
+          avatar: payload.picture || null,
+          isGoogle: true,
+          googleId: payload.sub
+        };
+        saveUser(); closeModal(); showApp();
+        showToast(`¡Bienvenido, ${payload.given_name || payload.name}!`, 'success');
+      } catch(e) { showToast('Error al procesar login de Google', 'error'); }
+    }
+
+    let googleRetries = 0;
+    function tryGoogleInit() {
+      if (typeof google !== 'undefined') { initGoogleAuth(); return; }
+      if (googleRetries < 10) { googleRetries++; setTimeout(tryGoogleInit, 500); }
+    }
+    tryGoogleInit();
+
+    // ============================================================
+    // MODALS
+    // ============================================================
     function openModal(type, data) {
+      // Guest restrictions
+      if (type === 'create' && isGuest()) {
+        showToast('Regístrate para crear encuestas', 'warning');
+        return;
+      }
+
       const root = document.getElementById('modals-root');
       let html = '';
 
       if (type === 'login') {
         html = `
-          <div class="modal-overlay" onclick="closeModalBg(event)">
-            <div class="modal-content">
-              <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
-              <h2 class="modal-title">Iniciar Sesión</h2>
-              <p class="modal-desc">Accede a tu cuenta para crear y responder encuestas</p>
-              <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                  <label>Nombre de usuario</label>
-                  <input type="text" id="login-username" placeholder="Tu nombre de usuario" required />
-                </div>
-                <div class="form-group">
-                  <label>Contraseña</label>
-                  <input type="password" id="login-password" placeholder="••••••••" required />
-                </div>
-                <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">Iniciar Sesión</button>
-              </form>
-              <div class="divider"><span>o</span></div>
-              <button class="google-btn" onclick="handleGoogleLogin()">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                Continuar con Google
-              </button>
-              <div class="form-switch">
-                ¿No tienes cuenta? <a onclick="closeModal();setTimeout(()=>openModal('register'),300)">Regístrate</a>
-              </div>
-            </div>
-          </div>`;
+        <div class="modal-overlay" onclick="closeModalBg(event)">
+          <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
+            <h2 class="modal-title">Iniciar Sesión</h2>
+            <p class="modal-desc">Accede para crear y responder encuestas</p>
+            <form onsubmit="handleLogin(event)">
+              <div class="form-group"><label>Usuario</label><input type="text" id="login-username" placeholder="Tu usuario" required/></div>
+              <div class="form-group"><label>Contraseña</label><input type="password" id="login-password" placeholder="••••••••" required/></div>
+              <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">Iniciar Sesión</button>
+            </form>
+            <div class="divider"><span>o</span></div>
+            <div id="google-btn-container" style="width:100%;display:flex;justify-content:center"></div>
+            <div class="divider"><span>o</span></div>
+            <button class="guest-btn" onclick="handleGuestLogin()">
+              <iconify-icon icon="solar:eye-bold-duotone" style="font-size:18px"></iconify-icon>
+              Entrar como Invitado
+            </button>
+            <div class="form-switch">¿No tienes cuenta? <a onclick="closeModal();setTimeout(()=>openModal('register'),300)">Regístrate</a></div>
+          </div>
+        </div>`;
       } else if (type === 'register') {
         html = `
-          <div class="modal-overlay" onclick="closeModalBg(event)">
-            <div class="modal-content">
-              <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
-              <h2 class="modal-title">Crear Cuenta</h2>
-              <p class="modal-desc">Únete a la comunidad y empieza a crear encuestas</p>
-              <form onsubmit="handleRegister(event)">
-                <div class="form-group">
-                  <label>Nombre de usuario</label>
-                  <input type="text" id="reg-username" placeholder="Elige un nombre" required />
-                </div>
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="email" id="reg-email" placeholder="tu@email.com" required />
-                </div>
-                <div class="form-group">
-                  <label>Contraseña</label>
-                  <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                </div>
-                <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">Crear Cuenta</button>
-              </form>
-              <div class="divider"><span>o</span></div>
-              <button class="google-btn" onclick="handleGoogleLogin()">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                Registrarse con Google
-              </button>
-              <div class="form-switch">
-                ¿Ya tienes cuenta? <a onclick="closeModal();setTimeout(()=>openModal('login'),300)">Inicia sesión</a>
-              </div>
-            </div>
-          </div>`;
+        <div class="modal-overlay" onclick="closeModalBg(event)">
+          <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
+            <h2 class="modal-title">Crear Cuenta</h2>
+            <p class="modal-desc">Únete a la comunidad para crear y votar</p>
+            <form onsubmit="handleRegister(event)">
+              <div class="form-group"><label>Usuario</label><input type="text" id="reg-username" placeholder="Elige un nombre" required/></div>
+              <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="tu@email.com" required/></div>
+              <div class="form-group"><label>Contraseña</label><input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6"/></div>
+              <button type="submit" class="primary-btn" style="width:100%;margin-top:8px">Crear Cuenta</button>
+            </form>
+            <div class="divider"><span>o</span></div>
+            <div id="google-btn-container" style="width:100%;display:flex;justify-content:center"></div>
+            <div class="divider"><span>o</span></div>
+            <button class="guest-btn" onclick="handleGuestLogin()">
+              <iconify-icon icon="solar:eye-bold-duotone" style="font-size:18px"></iconify-icon>
+              Entrar como Invitado
+            </button>
+            <div class="form-switch">¿Ya tienes cuenta? <a onclick="closeModal();setTimeout(()=>openModal('login'),300)">Inicia sesión</a></div>
+          </div>
+        </div>`;
       } else if (type === 'create') {
         html = `
-          <div class="modal-overlay" onclick="closeModalBg(event)">
-            <div class="modal-content create-modal-body">
-              <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
-              <h2 class="modal-title">Crear Encuesta</h2>
-              <p class="modal-desc">Diseña tu encuesta y compártela con la comunidad</p>
-              <form onsubmit="handleCreateSurvey(event)">
-                <div class="form-group">
-                  <label>Pregunta</label>
-                  <input type="text" id="survey-question" placeholder="¿Qué quieres preguntar?" required />
+        <div class="modal-overlay" onclick="closeModalBg(event)">
+          <div class="modal-content create-modal-body">
+            <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
+            <h2 class="modal-title">Crear Encuesta</h2>
+            <p class="modal-desc">Comparte tu pregunta con la comunidad</p>
+            <form onsubmit="handleCreateSurvey(event)">
+              <div class="form-group"><label>Pregunta</label><input type="text" id="survey-question" placeholder="¿Qué quieres preguntar?" required/></div>
+              <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" id="survey-category" list="cat-list" placeholder="Escribe tu categoría…" required/>
+                <datalist id="cat-list">
+                  <option value="Tecnología"><option value="Entretenimiento"><option value="Deportes">
+                  <option value="Ciencia"><option value="Política"><option value="Gaming">
+                  <option value="Música"><option value="Gastronomía"><option value="Viajes">
+                  <option value="Educación"><option value="Salud"><option value="Negocios">
+                </datalist>
+              </div>
+              <div class="form-group">
+                <label>Opciones</label>
+                <div id="options-list">
+                  <div class="option-row"><input type="text" class="survey-option-input" placeholder="Opción 1" required/></div>
+                  <div class="option-row"><input type="text" class="survey-option-input" placeholder="Opción 2" required/></div>
                 </div>
-                <div class="form-group">
-                  <label>Categoría</label>
-                  <select id="survey-category">
-                    <option value="Tecnología">Tecnología</option>
-                    <option value="Entretenimiento">Entretenimiento</option>
-                    <option value="Deportes">Deportes</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Opciones</label>
-                  <div id="options-list">
-                    <div class="option-row"><input type="text" class="survey-option-input" placeholder="Opción 1" required /></div>
-                    <div class="option-row"><input type="text" class="survey-option-input" placeholder="Opción 2" required /></div>
-                  </div>
-                  <button type="button" class="add-option-btn" onclick="addOptionField()">
-                    <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Añadir opción
-                  </button>
-                </div>
-                <div class="is-public-toggle">
-                  <div>
-                    <span>Encuesta pública</span>
-                    <small>Todos podrán verla y votar</small>
-                  </div>
-                  <label class="toggle">
-                    <input type="checkbox" id="survey-public" checked />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <button type="submit" class="primary-btn" style="width:100%;margin-top:20px">
-                  <iconify-icon icon="solar:check-circle-bold-duotone" style="vertical-align:middle;margin-right:6px"></iconify-icon>
-                  Crear Encuesta
-                </button>
-              </form>
-            </div>
-          </div>`;
+                <button type="button" class="add-option-btn" onclick="addOptionField()"><iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Añadir opción</button>
+              </div>
+              <div class="is-public-toggle">
+                <div><span>Encuesta pública</span><small>Todos podrán verla y votar</small></div>
+                <label class="toggle"><input type="checkbox" id="survey-public" checked/><span class="toggle-slider"></span></label>
+              </div>
+              <button type="submit" class="primary-btn" style="width:100%;margin-top:20px"><iconify-icon icon="solar:check-circle-bold-duotone" style="vertical-align:middle;margin-right:6px"></iconify-icon>Crear Encuesta</button>
+            </form>
+          </div>
+        </div>`;
       } else if (type === 'detail') {
         const s = data;
         const totalVotes = Object.values(s.votes).reduce((a, b) => a + b, 0);
         const hasVoted = votes[s.id];
-        const catClass = s.category === 'Tecnología' ? 'cat-tech' : s.category === 'Entretenimiento' ? 'cat-entertainment' : 'cat-sports';
-        const timeAgo = getTimeAgo(s.createdAt);
+        const cc = getCatColor(s.category);
+        const timeStr = formatTime(new Date(s.createdAt).getTime());
+        const guest = isGuest();
 
         html = `
-          <div class="modal-overlay" onclick="closeModalBg(event)">
-            <div class="modal-content detail-modal-body">
-              <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
-              <span class="survey-card-category ${catClass}">
-                <iconify-icon icon="solar:tag-bold-duotone" style="font-size:10px"></iconify-icon>
-                ${s.category}
-              </span>
-              <h2 class="detail-question">${s.question}</h2>
-              <div class="detail-meta">
-                <span><iconify-icon icon="solar:user-bold-duotone"></iconify-icon> ${s.author}</span>
-                <span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${timeAgo}</span>
-                <span><iconify-icon icon="solar:vote-bold-duotone"></iconify-icon> ${totalVotes} votos</span>
-              </div>
-              <div class="detail-options">
-                ${s.options.map((opt, i) => {
-                  const pct = totalVotes > 0 ? Math.round((s.votes[opt] / totalVotes) * 100) : 0;
-                  const sel = hasVoted === opt ? 'selected' : '';
-                  return `
-                    <div class="detail-option ${sel}" onclick="voteSurvey('${s.id}','${opt.replace(/'/g, "\\'")}')">
-                      <div class="detail-option-bar" style="width:${hasVoted ? pct : 0}%"></div>
-                      <div class="detail-option-text">
-                        <span>${opt}</span>
-                        ${hasVoted ? `<span class="detail-option-percent">${pct}%</span>` : ''}
-                      </div>
-                    </div>`;
-                }).join('')}
-              </div>
-              ${s.author === currentUser?.username ? `
-                <button class="btn-danger" style="width:100%;margin-top:20px;padding:10px" onclick="deleteSurvey('${s.id}')">
-                  <iconify-icon icon="solar:trash-bin-trash-bold-duotone" style="vertical-align:middle;margin-right:4px"></iconify-icon>
-                  Eliminar encuesta
-                </button>
-              ` : ''}
+        <div class="modal-overlay" onclick="closeModalBg(event)">
+          <div class="modal-content detail-modal-body">
+            <button class="modal-close" onclick="closeModal()"><iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon></button>
+            <span class="survey-card-category" style="background:${cc.bg};color:${cc.text}"><iconify-icon icon="solar:tag-bold-duotone" style="font-size:10px"></iconify-icon> ${s.category}</span>
+            <h2 class="detail-question">${s.question}</h2>
+            <div class="detail-meta">
+              <span><iconify-icon icon="solar:user-bold-duotone"></iconify-icon> ${s.author}</span>
+              <span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${timeStr}</span>
+              <span><iconify-icon icon="solar:vote-bold-duotone"></iconify-icon> ${totalVotes} voto${totalVotes!==1?'s':''}</span>
             </div>
-          </div>`;
+            <div class="detail-options">
+              ${s.options.map(opt => {
+                const pct = totalVotes > 0 ? Math.round(((s.votes[opt] || 0) / totalVotes) * 100) : 0;
+                const sel = hasVoted === opt ? 'voted' : '';
+                const locked = guest ? 'guest-locked' : '';
+                const clickHandler = guest
+                  ? `onclick="showToast('Inicia sesión para votar','warning')"`
+                  : `onclick="voteSurvey('${s.id}','${opt.replace(/'/g, "\\'")}')"` ;
+                return `
+                <div class="detail-option ${sel} ${locked}" ${clickHandler}>
+                  <div class="detail-option-bar" style="width:${hasVoted ? pct : 0}%"></div>
+                  <div class="detail-option-text">
+                    <span>${opt}</span>
+                    ${hasVoted ? `<span class="detail-option-percent">${pct}%</span>` : ''}
+                    ${guest && !hasVoted ? `<iconify-icon icon="solar:lock-bold-duotone" style="font-size:14px;color:var(--text-muted)"></iconify-icon>` : ''}
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+            ${guest ? '<p style="text-align:center;font-size:12px;color:var(--warning);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:6px"><iconify-icon icon="solar:shield-warning-bold-duotone"></iconify-icon> Inicia sesión para poder votar</p>' : (hasVoted ? '<p style="text-align:center;font-size:12px;color:var(--success);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:4px"><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Voto registrado</p>' : '<p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:16px">Haz clic en una opción para votar</p>')}
+            ${s.author === currentUser?.username && !guest ? `<button class="btn-danger" style="width:100%;margin-top:16px;padding:10px" onclick="deleteSurvey('${s.id}')"><iconify-icon icon="solar:trash-bin-trash-bold-duotone" style="vertical-align:middle;margin-right:4px"></iconify-icon>Eliminar</button>` : ''}
+          </div>
+        </div>`;
       }
 
       root.innerHTML = html;
+
+      // Render Google button after modal is in DOM
+      setTimeout(() => {
+        const container = document.getElementById('google-btn-container');
+        if (container && GOOGLE_CLIENT_ID && typeof google !== 'undefined') {
+          try {
+            google.accounts.id.renderButton(container, {
+              theme: 'filled_black', size: 'large', width: container.offsetWidth, text: 'signin_with', logo_alignment: 'center'
+            });
+          } catch(e) {}
+        }
+      }, 200);
     }
 
     function closeModal() {
-      const overlay = document.querySelector('.modal-overlay');
-      if (overlay) {
-        overlay.classList.add('closing');
-        setTimeout(() => {
-          document.getElementById('modals-root').innerHTML = '';
-        }, 200);
-      }
+      const o = document.querySelector('.modal-overlay');
+      if (o) { o.classList.add('closing'); setTimeout(() => { document.getElementById('modals-root').innerHTML = ''; }, 200); }
     }
+    function closeModalBg(e) { if (e.target.classList.contains('modal-overlay')) closeModal(); }
 
-    function closeModalBg(e) {
-      if (e.target.classList.contains('modal-overlay')) closeModal();
-    }
-
-    // ==========================================
+    // ============================================================
     // AUTH
-    // ==========================================
+    // ============================================================
     function handleLogin(e) {
       e.preventDefault();
-      const username = document.getElementById('login-username').value.trim();
-      if (!username) return;
-      currentUser = { username, email: '', avatar: username.charAt(0).toUpperCase() };
-      saveUser();
-      closeModal();
-      showApp();
-      showToast(`¡Bienvenido, ${username}!`, 'success');
+      const u = document.getElementById('login-username').value.trim();
+      if (!u) return;
+      currentUser = { username: u, email: '', avatar: null, isGuest: false };
+      saveUser(); closeModal(); showApp();
+      showToast(`¡Bienvenido, ${u}!`, 'success');
     }
 
     function handleRegister(e) {
       e.preventDefault();
-      const username = document.getElementById('reg-username').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      if (!username) return;
-      currentUser = { username, email, avatar: username.charAt(0).toUpperCase() };
-      saveUser();
-      closeModal();
-      showApp();
-      showToast(`¡Cuenta creada! Bienvenido, ${username}`, 'success');
+      const u = document.getElementById('reg-username').value.trim();
+      const em = document.getElementById('reg-email').value.trim();
+      if (!u) return;
+      currentUser = { username: u, email: em, avatar: null, isGuest: false };
+      saveUser(); closeModal(); showApp();
+      showToast(`¡Cuenta creada, ${u}!`, 'success');
     }
 
-    function handleGoogleLogin() {
-      currentUser = { username: 'GoogleUser', email: 'user@gmail.com', avatar: 'G', isGoogle: true };
-      saveUser();
-      closeModal();
-      showApp();
-      showToast('Sesión iniciada con Google', 'success');
+    function handleGuestLogin() {
+      currentUser = {
+        username: 'Invitado',
+        email: '',
+        avatar: null,
+        isGuest: true
+      };
+      saveUser(); closeModal(); showApp();
+      showToast('Modo Invitado: Solo puedes ver encuestas', 'warning');
     }
 
     function logout() {
       currentUser = null;
       localStorage.removeItem('metrica_user');
-      if (isPlaying) { stopOscillators(); isPlaying = false; }
       document.getElementById('app').classList.add('hidden');
       document.getElementById('welcome').classList.remove('hidden');
       showToast('Sesión cerrada', 'info');
@@ -1880,15 +703,63 @@
     function showApp() {
       document.getElementById('welcome').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      document.getElementById('nav-avatar').textContent = currentUser.avatar;
+
+      const guest = isGuest();
+
+      // Guest Banner
+      document.getElementById('guest-banner').classList.toggle('hidden', !guest);
+
+      // Hide/Show Create button in Dashboard
+      const btnCreate = document.getElementById('btn-create-survey');
+      if (btnCreate) btnCreate.classList.toggle('hidden', guest);
+
+      // Hide/Show FAB
+      const fab = document.getElementById('fab-btn');
+      if (fab) fab.classList.toggle('hidden', guest);
+
+      // Hide/Show Danger Zone in Settings for guests
+      const dangerZone = document.getElementById('danger-zone-card');
+      if (dangerZone) dangerZone.classList.toggle('hidden', guest);
+
+      // Avatar
+      updateAvatar();
+
+      // Settings fields
       document.getElementById('settings-username').value = currentUser.username;
       document.getElementById('settings-email').value = currentUser.email || '';
+      document.getElementById('settings-username').readOnly = guest;
+
+      const at = document.getElementById('settings-account-type');
+      if (guest) {
+        at.innerHTML = '<iconify-icon icon="solar:eye-bold-duotone" style="font-size:14px;color:var(--warning)"></iconify-icon> Modo Invitado <span style="color:var(--danger);font-size:10px">(Sin permisos para crear/votar)</span>';
+      } else if (currentUser.isGoogle) {
+        at.innerHTML = '<iconify-icon icon="logos:google-icon" style="font-size:14px"></iconify-icon> Cuenta de Google';
+      } else {
+        at.innerHTML = '<iconify-icon icon="solar:user-bold-duotone" style="font-size:14px;color:var(--accent-light)"></iconify-icon> Cuenta local';
+      }
+
+      initSpotify();
       switchTab('dashboard');
     }
 
-    // ==========================================
+    function updateAvatar() {
+      const el = document.getElementById('nav-avatar');
+      if (currentUser.avatar && currentUser.avatar.startsWith('http')) {
+        el.innerHTML = `<img src="${currentUser.avatar}" alt="avatar"/>`;
+      } else {
+        el.textContent = currentUser.username.charAt(0).toUpperCase();
+      }
+      // Style guest avatar differently
+      if (isGuest()) {
+        el.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+      } else {
+        el.style.background = 'linear-gradient(135deg, #6366f1, #06b6d4)';
+      }
+    }
+
+    // ============================================================
     // SURVEY CRUD
-    // ==========================================
+    // ============================================================
     let optionCount = 2;
 
     function addOptionField() {
@@ -1896,64 +767,56 @@
       const list = document.getElementById('options-list');
       const div = document.createElement('div');
       div.className = 'option-row';
-      div.innerHTML = `
-        <input type="text" class="survey-option-input" placeholder="Opción ${optionCount}" required />
-        <button type="button" class="remove-option" onclick="this.parentElement.remove();optionCount--">
-          <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
-        </button>`;
+      div.innerHTML = `<input type="text" class="survey-option-input" placeholder="Opción ${optionCount}" required/><button type="button" class="remove-option" onclick="this.parentElement.remove();optionCount--"><iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon></button>`;
       list.appendChild(div);
     }
 
     function handleCreateSurvey(e) {
       e.preventDefault();
+      if (isGuest()) { showToast('Regístrate para crear encuestas', 'warning'); return; }
+
       const question = document.getElementById('survey-question').value.trim();
-      const category = document.getElementById('survey-category').value;
+      const category = document.getElementById('survey-category').value.trim();
       const isPublic = document.getElementById('survey-public').checked;
       const optionInputs = document.querySelectorAll('.survey-option-input');
       const options = [];
-      optionInputs.forEach(inp => {
-        const v = inp.value.trim();
-        if (v) options.push(v);
-      });
+      optionInputs.forEach(inp => { const v = inp.value.trim(); if (v) options.push(v); });
 
-      if (options.length < 2) {
-        showToast('Añade al menos 2 opciones', 'error');
-        return;
-      }
+      if (options.length < 2) { showToast('Añade al menos 2 opciones', 'error'); return; }
+      if (!category) { showToast('Escribe una categoría', 'error'); return; }
 
       const votesObj = {};
       options.forEach(o => votesObj[o] = 0);
 
       const survey = {
-        id: 's' + Date.now(),
-        question,
-        category,
-        options,
-        votes: votesObj,
-        author: currentUser.username,
-        public: isPublic,
-        createdAt: Date.now()
+        id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        question, category, options, votes: votesObj,
+        author: currentUser.username, public: isPublic,
+        createdAt: new Date().toISOString(),
       };
 
       surveys.unshift(survey);
       saveSurveys();
       optionCount = 2;
       closeModal();
+      updateCategoryFilter();
       renderAll();
-      showToast('¡Encuesta creada con éxito!', 'success');
+      showToast('¡Encuesta creada!', 'success');
     }
 
     function voteSurvey(surveyId, option) {
-      if (votes[surveyId]) {
-        showToast('Ya has votado en esta encuesta', 'error');
-        return;
-      }
+      if (isGuest()) { showToast('Inicia sesión para votar', 'warning'); return; }
+      if (votes[surveyId]) { showToast('Ya votaste en esta encuesta', 'error'); return; }
+
       const survey = surveys.find(s => s.id === surveyId);
       if (!survey) return;
+
       survey.votes[option] = (survey.votes[option] || 0) + 1;
       votes[surveyId] = option;
-      saveSurveys();
-      saveVotes();
+      saveSurveys(); saveVotes();
+
+      try { channel.postMessage({ type: 'vote', surveyId, option }); } catch(e) {}
+
       closeModal();
       setTimeout(() => openModal('detail', survey), 250);
       showToast('¡Voto registrado!', 'success');
@@ -1961,190 +824,164 @@
 
     function deleteSurvey(id) {
       surveys = surveys.filter(s => s.id !== id);
-      saveSurveys();
-      closeModal();
-      renderAll();
+      delete votes[id];
+      saveSurveys(); saveVotes();
+      closeModal(); renderAll();
       showToast('Encuesta eliminada', 'info');
     }
 
     function deleteAllSurveys() {
+      if (isGuest()) return;
       surveys = surveys.filter(s => s.author !== currentUser?.username);
-      saveSurveys();
-      renderAll();
-      showToast('Todas tus encuestas han sido eliminadas', 'info');
+      saveSurveys(); renderAll();
+      showToast('Tus encuestas han sido eliminadas', 'info');
     }
 
     function deleteAccount() {
-      if (confirm('¿Estás seguro? Se eliminará tu cuenta y todas tus encuestas.')) {
+      if (isGuest()) { logout(); return; }
+      if (confirm('¿Eliminar tu cuenta y todas tus encuestas?')) {
         surveys = surveys.filter(s => s.author !== currentUser?.username);
-        saveSurveys();
-        logout();
+        saveSurveys(); logout();
         showToast('Cuenta eliminada', 'info');
       }
     }
 
-    // ==========================================
+    // ============================================================
     // RENDER
-    // ==========================================
-    function getCatClass(cat) {
-      return cat === 'Tecnología' ? 'cat-tech' : cat === 'Entretenimiento' ? 'cat-entertainment' : 'cat-sports';
-    }
-
-    function getTimeAgo(ts) {
-      const diff = Date.now() - ts;
-      const mins = Math.floor(diff / 60000);
-      if (mins < 1) return 'Ahora';
-      if (mins < 60) return `Hace ${mins}m`;
-      const hrs = Math.floor(mins / 60);
-      if (hrs < 24) return `Hace ${hrs}h`;
-      return `Hace ${Math.floor(hrs / 24)}d`;
-    }
-
-    function renderSurveyCard(s, showActions = false) {
+    // ============================================================
+    function renderSurveyCard(s) {
       const totalVotes = Object.values(s.votes).reduce((a, b) => a + b, 0);
       const hasVoted = votes[s.id];
-      const catClass = getCatClass(s.category);
-      const timeAgo = getTimeAgo(s.createdAt);
-
-      const topOption = s.options.reduce((a, b) => (s.votes[a] || 0) >= (s.votes[b] || 0) ? a : b);
-      const topPct = totalVotes > 0 ? Math.round(((s.votes[topOption] || 0) / totalVotes) * 100) : 0;
+      const cc = getCatColor(s.category);
+      const timeStr = formatTime(new Date(s.createdAt).getTime());
+      const safeData = encodeURIComponent(JSON.stringify(s));
 
       return `
-        <div class="survey-card" onclick="openModal('detail', ${JSON.stringify(s).replace(/"/g, '&quot;')})">
-          <span class="survey-card-category ${catClass}">
-            <iconify-icon icon="solar:tag-bold-duotone" style="font-size:10px"></iconify-icon>
-            ${s.category}
-          </span>
-          <div class="survey-card-question">${s.question}</div>
-          <div class="survey-card-options">
-            ${hasVoted ? s.options.map(opt => {
-              const pct = totalVotes > 0 ? Math.round(((s.votes[opt] || 0) / totalVotes) * 100) : 0;
-              return `
-                <div class="survey-option voted">
-                  <span>${opt}</span>
-                  <span class="option-votes">${pct}%</span>
-                </div>
-                <div class="option-bar"><div class="option-bar-fill" style="width:${pct}%"></div></div>`;
-            }).join('') : s.options.map(opt => `
-              <div class="survey-option">${opt}</div>
-            `).join('')}
-          </div>
-          <div class="survey-card-footer">
-            <span><iconify-icon icon="solar:user-bold-duotone"></iconify-icon> ${s.author}</span>
-            <span><iconify-icon icon="solar:vote-bold-duotone"></iconify-icon> ${totalVotes}</span>
-            <span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${timeAgo}</span>
-          </div>
-        </div>`;
+      <div class="survey-card" onclick="openModal('detail', JSON.parse(decodeURIComponent('${safeData}')))">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span class="survey-card-category" style="background:${cc.bg};color:${cc.text}"><iconify-icon icon="solar:tag-bold-duotone" style="font-size:10px"></iconify-icon> ${s.category}</span>
+          <span class="live-badge" style="margin-left:auto"><span class="online-dot"></span>En vivo</span>
+        </div>
+        <div class="survey-card-question">${s.question}</div>
+        <div class="survey-card-meta">
+          <span><iconify-icon icon="solar:user-bold-duotone"></iconify-icon> ${s.author}</span>
+          <span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${timeStr}</span>
+        </div>
+        <div class="survey-card-options">
+          ${s.options.map(opt => {
+            const pct = totalVotes > 0 ? Math.round(((s.votes[opt] || 0) / totalVotes) * 100) : 0;
+            return `
+            <div class="survey-option-preview">
+              <div class="bar-fill" style="width:${hasVoted ? pct : 0}%"></div>
+              <div class="opt-inner">
+                <span>${opt}</span>
+                ${hasVoted ? `<span class="opt-pct">${pct}%</span>` : ''}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="survey-card-footer">
+          <span><iconify-icon icon="solar:vote-bold-duotone"></iconify-icon> ${totalVotes} voto${totalVotes!==1?'s':''}</span>
+          <span>${hasVoted ? '<iconify-icon icon="solar:check-circle-bold-duotone" style="color:var(--success)"></iconify-icon> Votada' : '<iconify-icon icon="solar:cursor-bold-duotone"></iconify-icon> Sin votar'}</span>
+        </div>
+      </div>`;
     }
 
     function renderDashboard() {
-      const container = document.getElementById('my-surveys');
-      const mySurveys = surveys.filter(s => s.author === currentUser?.username);
-
-      if (mySurveys.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column:1/-1">
-            <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-            <h3>No tienes encuestas aún</h3>
-            <p>Crea tu primera encuesta haciendo clic en el botón de arriba</p>
-          </div>`;
+      const c = document.getElementById('my-surveys');
+      if (isGuest()) {
+        c.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><iconify-icon icon="solar:shield-warning-bold-duotone"></iconify-icon><h3>Modo Invitado</h3><p>Regístrate o inicia sesión para crear y gestionar tus encuestas</p></div>`;
         return;
       }
-
-      container.innerHTML = mySurveys.map(s => renderSurveyCard(s, true)).join('');
+      const my = surveys.filter(s => s.author === currentUser?.username);
+      if (my.length === 0) {
+        c.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon><h3>Sin encuestas aún</h3><p>Crea tu primera encuesta con el botón de arriba</p></div>`;
+        return;
+      }
+      c.innerHTML = my.map(renderSurveyCard).join('');
     }
 
     function renderPublicFeed() {
-      const container = document.getElementById('public-list');
-      const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
+      const c = document.getElementById('public-list');
+      const search = (document.getElementById('search-input')?.value || '').toLowerCase();
       const catFilter = document.getElementById('category-filter')?.value || '';
 
-      let publicSurveys = surveys.filter(s => s.public);
+      let list = surveys.filter(s => s.public);
+      if (search) list = list.filter(s => s.question.toLowerCase().includes(search) || s.category.toLowerCase().includes(search));
+      if (catFilter) list = list.filter(s => s.category === catFilter);
 
-      if (searchTerm) {
-        publicSurveys = publicSurveys.filter(s =>
-          s.question.toLowerCase().includes(searchTerm) ||
-          s.category.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      if (catFilter) {
-        publicSurveys = publicSurveys.filter(s => s.category === catFilter);
-      }
-
-      if (publicSurveys.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column:1/-1">
-            <iconify-icon icon="solar:global-bold-duotone"></iconify-icon>
-            <h3>No se encontraron encuestas</h3>
-            <p>Intenta con otra búsqueda o categoría</p>
-          </div>`;
+      if (list.length === 0) {
+        c.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><iconify-icon icon="solar:global-bold-duotone"></iconify-icon><h3>Sin resultados</h3><p>Intenta con otra búsqueda o categoría</p></div>`;
         return;
       }
-
-      container.innerHTML = publicSurveys.map(s => renderSurveyCard(s)).join('');
+      c.innerHTML = list.map(renderSurveyCard).join('');
     }
 
-    function filterSurveys() {
-      renderPublicFeed();
+    function filterSurveys() { renderPublicFeed(); }
+    function renderAll() { renderDashboard(); renderPublicFeed(); }
+
+    function updateCategoryFilter() {
+      const select = document.getElementById('category-filter');
+      if (!select) return;
+      const cats = [...new Set(surveys.filter(s => s.public).map(s => s.category))].sort();
+      const current = select.value;
+      select.innerHTML = '<option value="">Todas</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+      if (cats.includes(current)) select.value = current;
     }
 
-    function renderAll() {
-      renderDashboard();
-      renderPublicFeed();
-    }
-
-    // ==========================================
+    // ============================================================
     // TABS
-    // ==========================================
+    // ============================================================
     function switchTab(tab) {
       document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-
       const view = document.getElementById(`tab-${tab}`);
-      if (view) {
-        view.classList.remove('hidden');
-        // Re-trigger animation
-        view.style.animation = 'none';
-        view.offsetHeight; // reflow
-        view.style.animation = '';
-      }
-
+      if (view) { view.classList.remove('hidden'); view.style.animation = 'none'; view.offsetHeight; view.style.animation = ''; }
       const link = document.querySelector(`.nav-link[data-tab="${tab}"]`);
       if (link) link.classList.add('active');
-
-      // Hide FAB on settings
-      const fab = document.querySelector('.fab');
-      if (fab) fab.style.display = tab === 'settings' ? 'none' : 'flex';
-
+      const fab = document.getElementById('fab-btn');
+      if (fab) fab.style.display = (tab === 'settings' || isGuest()) ? 'none' : 'flex';
       if (tab === 'dashboard') renderDashboard();
-      if (tab === 'public') renderPublicFeed();
+      if (tab === 'public') { updateCategoryFilter(); renderPublicFeed(); }
+      if (tab === 'settings') initSpotify();
     }
 
-    // ==========================================
+    // ============================================================
     // PROFILE
-    // ==========================================
+    // ============================================================
     function saveProfile() {
-      const username = document.getElementById('settings-username').value.trim();
-      const email = document.getElementById('settings-email').value.trim();
-      if (!username) { showToast('El nombre es obligatorio', 'error'); return; }
-
-      // Update author name in surveys
+      if (isGuest()) { showToast('Los invitados no pueden editar el perfil', 'warning'); return; }
+      const u = document.getElementById('settings-username').value.trim();
+      const em = document.getElementById('settings-email').value.trim();
+      if (!u) { showToast('El nombre es obligatorio', 'error'); return; }
       const oldName = currentUser.username;
-      surveys.forEach(s => { if (s.author === oldName) s.author = username; });
+      surveys.forEach(s => { if (s.author === oldName) s.author = u; });
       saveSurveys();
-
-      currentUser.username = username;
-      currentUser.email = email;
-      currentUser.avatar = username.charAt(0).toUpperCase();
-      saveUser();
-      document.getElementById('nav-avatar').textContent = currentUser.avatar;
+      currentUser.username = u;
+      if (!currentUser.isGoogle) currentUser.email = em;
+      saveUser(); updateAvatar();
       showToast('Perfil actualizado', 'success');
     }
 
-    // ==========================================
+    // ============================================================
+    // AUTO-REFRESH
+    // ============================================================
+    setInterval(() => {
+      if (currentUser && !document.getElementById('app').classList.contains('hidden')) {
+        const stored = localStorage.getItem('metrica_surveys');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (JSON.stringify(parsed) !== JSON.stringify(surveys)) {
+            surveys = parsed;
+            renderAll();
+          }
+        }
+      }
+    }, 2000);
+
+    // ============================================================
     // INIT
-    // ==========================================
+    // ============================================================
     if (currentUser) {
       showApp();
     }
