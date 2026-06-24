@@ -1,0 +1,10 @@
+# Node.js & Vite project ignore rules
+node_modules/
+/dist/
+/.env
+.DS_Store
+.idea/
+.vscode/
+# Do NOT ignore frontend source files
+!frontend/src/**
+!frontend/public/**
