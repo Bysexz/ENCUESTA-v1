@@ -1,4 +1,3 @@
-// package.json for frontend (Vite + React + TypeScript)
 {
   "name": "metrica-frontend",
   "version": "0.1.0",
